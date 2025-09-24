@@ -13,15 +13,20 @@ async function getComments(postId: string): Promise<Comment[]> {
   try {
     const res = await fetch(
       `https://jsonplaceholder.typicode.com/posts/${postId}/comments`,
-      { cache: "no-store" } // ป้องกัน caching บน Vercel
+      { cache: "no-store" }
     );
     if (!res.ok) throw new Error(`Failed to fetch comments: ${res.status}`);
     return res.json();
-  } catch (err: any) {
-    console.error("Error fetching comments:", err.message);
-    return []; // fallback เป็น array ว่าง
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Error fetching comments:", err.message);
+    } else {
+      console.error("Unexpected error fetching comments:", err);
+    }
+    return []; // fallback
   }
 }
+
 
 function CommentCard({ comment }: { comment: Comment }) {
   return (
