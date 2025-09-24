@@ -1,5 +1,4 @@
 // src/app/(user)/post/[id]/comment/page.tsx
-import React from "react";
 import BackButton from "@/components/BackButton";
 
 type Comment = {
@@ -11,11 +10,17 @@ type Comment = {
 };
 
 async function getComments(postId: string): Promise<Comment[]> {
-  const res = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${postId}/comments`
-  );
-  if (!res.ok) throw new Error("Failed to fetch comments");
-  return res.json();
+  try {
+    const res = await fetch(
+      `https://jsonplaceholder.typicode.com/posts/${postId}/comments`,
+      { cache: "no-store" } // ป้องกัน caching บน Vercel
+    );
+    if (!res.ok) throw new Error(`Failed to fetch comments: ${res.status}`);
+    return res.json();
+  } catch (err: any) {
+    console.error("Error fetching comments:", err.message);
+    return []; // fallback เป็น array ว่าง
+  }
 }
 
 function CommentCard({ comment }: { comment: Comment }) {
@@ -28,7 +33,7 @@ function CommentCard({ comment }: { comment: Comment }) {
   );
 }
 
-// ✅ Server Component ไม่ใช้ "use client"
+// ✅ Server Component ไม่ต้อง "use client" และ params เป็น object ธรรมดา
 export default async function CommentPage({ params }: { params: { id: string } }) {
   const comments = await getComments(params.id);
 
