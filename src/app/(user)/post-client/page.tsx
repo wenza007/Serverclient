@@ -3,14 +3,22 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+// ประกาศ type ของ Post
+interface Post {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+}
+
 export default function PostClientPage() {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchPosts() {
       const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-      const data = await res.json();
+      const data: Post[] = await res.json(); // กำหนด type ให้ตรง
       setPosts(data);
       setLoading(false);
     }
