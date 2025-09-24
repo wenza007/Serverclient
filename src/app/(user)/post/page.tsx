@@ -1,3 +1,4 @@
+// src/app/(user)/post/page.tsx
 import Link from "next/link";
 
 type Post = {

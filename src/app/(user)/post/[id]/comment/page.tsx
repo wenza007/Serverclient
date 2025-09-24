@@ -1,3 +1,4 @@
+// src/app/(user)/post/[id]/comment/page.tsx
 import React from "react";
 import BackButton from "@/components/BackButton";
 
