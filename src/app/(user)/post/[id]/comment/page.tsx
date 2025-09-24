@@ -17,7 +17,13 @@ async function getComments(postId: string): Promise<Comment[]> {
   return res.json();
 }
 
-export default async function CommentPage({ params }: { params: { id: string } }) {
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
+export default async function CommentPage({ params }: Props) {
   const comments = await getComments(params.id);
 
   return (

@@ -1,49 +1,29 @@
-// src/store/posts.ts 
+"use client";
 
-"use client"; 
+import { create } from "zustand";
+import axios from "axios";
 
-import { create } from "zustand"; 
+type Post = { id: number; title: string; body: string };
 
-import axios from "axios"; 
+type State = {
+  items: Post[];
+  loading: boolean;
+  error: string | null;
+  fetchData: () => Promise<void>;
+};
 
- 
-
-type Post = { id: number; title: string; body: string }; 
-
- 
-
-type State = { 
-
-  items: Post[]; 
-
-  loading: boolean; 
-
-  error: string | null; 
-
-  fetchData: () => Promise<void>; 
-
-}; 
-
- 
-
-export const usePosts = create<State>((set) => ({ 
-
-  items: [], 
-
-  loading: false, 
-
-  error: null, 
-
-  fetchData: async () => { 
-
-    const { data } = await axios.get<Post[]>( 
-
-      "https://jsonplaceholder.typicode.com/posts" 
-
-    ); 
-
-    set({ items: data }); 
-
-  }, 
-
-})); 
+export const usePosts = create<State>((set) => ({
+  items: [],
+  loading: false,
+  error: null,
+  fetchData: async () => {
+    try {
+      const { data } = await axios.get<Post[]>(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      set({ items: data, loading: false, error: null });
+    } catch (e: any) {
+      set({ loading: false, error: e.message });
+    }
+  },
+}));
