@@ -18,15 +18,11 @@ async function getComments(postId: string): Promise<Comment[]> {
     if (!res.ok) throw new Error(`Failed to fetch comments: ${res.status}`);
     return res.json();
   } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error("Error fetching comments:", err.message);
-    } else {
-      console.error("Unexpected error fetching comments:", err);
-    }
-    return []; // fallback
+    if (err instanceof Error) console.error(err.message);
+    else console.error(err);
+    return [];
   }
 }
-
 
 function CommentCard({ comment }: { comment: Comment }) {
   return (
@@ -38,16 +34,16 @@ function CommentCard({ comment }: { comment: Comment }) {
   );
 }
 
-// ✅ Server Component ไม่ต้อง "use client" และ params เป็น object ธรรมดา
-export default async function CommentPage({ params }: { params: { id: string } }) {
-  const comments = await getComments(params.id);
+export default async function CommentPage({ params }: { params: Promise<{ id: string }> }) {
+  // unwrap params
+  const { id } = await params; // ✅ await Promise
+
+  const comments = await getComments(id);
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">💬 Comments for Post ID: {params.id}</h1>
-
+      <h1 className="text-3xl font-bold mb-6">💬 Comments for Post ID: {id}</h1>
       <BackButton />
-
       {comments.length === 0 ? (
         <p className="text-gray-500">ไม่สามารถโหลดความคิดเห็นได้ หรือไม่มีความคิดเห็น</p>
       ) : (
