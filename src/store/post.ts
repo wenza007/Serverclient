@@ -18,12 +18,17 @@ export const usePosts = create<State>((set) => ({
   error: null,
   fetchData: async () => {
     try {
+      set({ loading: true, error: null });
       const { data } = await axios.get<Post[]>(
         "https://jsonplaceholder.typicode.com/posts"
       );
-      set({ items: data, loading: false, error: null });
-    } catch (e: any) {
-      set({ loading: false, error: e.message });
+      set({ items: data, loading: false });
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        set({ loading: false, error: e.message });
+      } else {
+        set({ loading: false, error: "An unexpected error occurred." });
+      }
     }
   },
 }));
